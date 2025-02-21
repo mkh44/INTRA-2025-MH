@@ -2,30 +2,28 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Get wavelength values between 400 and 800
+# Get wavelength values between 400 and 800. Kept in nm to avoid float result being used in absorption_spectrum calculation.
 wavelength = np.linspace(400, 800, 100)
 
 # Define non-linear blackbody source spectrum
 def planck_law(wavelength, temperature):
     h = 6.626e-34 # Planck's constant (Js)
-    c = 2.997e10 # Speed of light (m/s)
+    c = 2.997e8 # Speed of light (m/s)
     k = 1.381e-23 # Boltzmann constant (J/K)
-    wavelength_m = wavelength * 1e-9 # Converting nm to m
 
-    return (2*h*c**2) / (wavelength_m**5) / (np.exp(h*c / wavelength_m * k * temperature) - 1)
-
-# Generate wavelength values
-wavelength = np.linspace(400, 800, 100)
+    return (2*h*c**2) / (np.exp(h*c / (wavelength * 1e-9) * k * temperature) - 1) ((wavelength * 1e-9)**5)
 
 # Define blackbody spectrum for a given temperature
-temperature =5800
+temperature = 5800
 source_spectrum = planck_law(wavelength, temperature)
 
 # Normalise source spectrum
-source_spectrum /= np.max(source_spectrum)
+source_spectrum /= np.sum(source_spectrum)
 
 # Make atmospheric absorption spectrum
-absorption_spectrum = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+def absorption_spectrum(wavelength):
+
+    return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
 #Add absorption bands maybe (Gaussian)
 
