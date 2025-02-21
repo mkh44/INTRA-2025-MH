@@ -22,7 +22,7 @@ temperature =5800
 source_spectrum = planck_law(wavelength, temperature)
 
 # Normalise source spectrum
-source_spectrum /= np.max(source_spectrum)
+source_spectrum /= np.sum(source_spectrum)
 
 # Make atmospheric absorption spectrum
 absorption_spectrum = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
