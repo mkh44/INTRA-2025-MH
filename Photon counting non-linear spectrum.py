@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 # Get wavelength values between 400 and 800. Kept in nm to avoid float result being used in absorption_spectrum calculation.
 wavelength = np.linspace(400, 800, 100)
-
+#testing to see if it uploads to master
 # Define non-linear blackbody source spectrum
 def planck_law(wavelength, temperature):
     h = 6.626e-34 # Planck's constant (Js)
