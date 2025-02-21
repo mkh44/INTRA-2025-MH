@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Get wavelength values between 400 and 800
-wavelength = np.linspace(400, 800, 100) * 1e-9
+wavelength = np.linspace(400, 800, 100)
 
 # Define non-linear blackbody source spectrum
 def planck_law(wavelength, temperature):
@@ -11,7 +11,7 @@ def planck_law(wavelength, temperature):
     c = 2.997e8 # Speed of light (m/s)
     k = 1.381e-23 # Boltzmann constant (J/K)
 
-    return (2*h*c**2) / (wavelength**5) / (np.exp(h*c / wavelength * k * temperature) - 1)
+    return (2*h*c**2) / ((wavelength * 1e-9)**5) * 1/(np.exp(h*c / (wavelength * 1e-9) * k * temperature) - 1)
 
 # Define blackbody spectrum for a given temperature
 temperature =5800
