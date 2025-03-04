@@ -31,6 +31,13 @@ def absorption_spectrum(wavelength):
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
 observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 
+#Define filter to remove light around target wavelength
+def wavelength_filter(wavelength, target_wavelength, bandwidth=20):
+    return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
+
+#Apply filter to remove red light (620 - 750 nm)
+Filter_curve = wavelength_filter(wavelength,)
+
 # Create DataFrame
 spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
