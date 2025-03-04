@@ -13,7 +13,7 @@ def planck_law(wavelength, temperature):
     c = 2.997e8 # Speed of light (m/s)
     k = 1.381e-23 # Boltzmann constant (J/K)
 
-    return (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h*c / (wavelength *1e-9 / (k * temperature))) -1))
+    return (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
 
 # Create blackbody spectrum for a given temperature
 source_spectrum = planck_law(wavelength, temperature)
