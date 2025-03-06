@@ -7,6 +7,10 @@ import matplotlib.pyplot as plt
 wavelength = np.linspace(400, 800, 100)
 temperature = 5800
 
+#Define filter to remove light around target wavelength
+def wavelength_filter(wavelength, target_wavelength, bandwidth=65):
+    return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
+
 # Define non-linear blackbody source spectrum function
 def planck_law(wavelength, temperature):
     h = 6.626e-34 # Planck's constant (Js)
@@ -15,25 +19,23 @@ def planck_law(wavelength, temperature):
 
     return (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
 
+# Make atmospheric absorption spectrum
+def absorption_spectrum(wavelength):
+
+    return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+
 # Create blackbody spectrum for a given temperature
 source_spectrum = planck_law(wavelength, temperature)
 
 # Normalise source spectrum
 source_spectrum /= np.sum(source_spectrum)
 
-# Make atmospheric absorption spectrum
-def absorption_spectrum(wavelength):
-
-    return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
 #Add absorption bands maybe (Gaussian)
 
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
 observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 
-#Define filter to remove light around target wavelength
-def wavelength_filter(wavelength, target_wavelength, bandwidth=65):
-    return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
 
 #Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
