@@ -62,19 +62,19 @@ fig, ax1 = plt.subplots(figsize=(10, 6))
 # 1st y axis
 ax1.plot(wavelength, source_spectrum * 100, linestyle='--', label='Source Spectrum', color='red')
 #ax1.plot(wavelength, observed_spectrum * 100, linewidth=2, label='Observed Spectrum')
-ax1.errorbar(wavelength, observed_spectrum * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', capsize=3)
+ax1.errorbar(wavelength, observed_spectrum * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
 
 ax1.set_xlabel('Wavelength (nm)')
 ax1.set_ylabel('Intensity (%)')
 
-ax1.set_ylim(0, 5) # this is set to 110 so source spectrum is visible
+ax1.set_ylim(0, 3) # this is set to 110 so source spectrum is visible
 ax1.legend(loc='upper left')
 ax1.grid()
 
 # 2nd y Axis
 ax2 = ax1.twinx()
-ax2.plot(wavelength, absorption_spectrum(wavelength) * 100, linestyle='-.', label='Atmospheric Absorption')
+ax2.plot(wavelength, absorption_spectrum(wavelength) * 100, linestyle='-.', label='Atmospheric Absorption', color='purple')
 ax2.set_ylabel('Intensity (%)')
 ax2.set_ylim(0, 110)
 ax2.legend(loc='upper right')
