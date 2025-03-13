@@ -43,6 +43,7 @@ photon_counts *= 100
 
 # Calculating expectation wavelength from photon counts
 expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
+print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
 
 # Error bars
 std_dev = np.sqrt(photon_counts + photon_counts**2)
