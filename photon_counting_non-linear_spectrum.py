@@ -40,9 +40,17 @@ observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum * filter_curve
 
+#defining photon counts from intensity
 photon_counts = (observed_spectrum * (wavelength * 1e-9)) / (h * c)
-#Error bars
 
+#Normalise photon counts to 100% scale
+photon_counts /= np.sum(photon_counts)
+photon_counts *= 100
+
+# Calculating expectation wavelength from photon counts
+expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
+
+#Error bars
 std_dev = np.sqrt(photon_counts + photon_counts**2)
 std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
 
