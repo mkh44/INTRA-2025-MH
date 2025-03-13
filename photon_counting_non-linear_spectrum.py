@@ -3,9 +3,24 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Get wavelength values between 400 and 800. Kept in nm to avoid float result being used in absorption_spectrum calculation.
-
 wavelength = np.linspace(400, 800, 100)
-temperature = 5800
+
+# Get user input for temperature, defaulting to 5780 K if no input given
+def get_temperature():
+    while True:
+        user_input = input('Enter temperature of blackbody in Kelvin (default; 5780 K): ').strip()
+        if user_input == '': # default value if input is empty
+            temperature = 5780
+            print(f'The temperature is: {temperature} K')
+            return 5780
+        try:
+            temperature = float(user_input)
+            print(f'The temperature is: {temperature} K')
+            return temperature
+        except ValueError:
+            print('Invalid input. Please enter a valid number or press enter for default (5780 K)')
+
+temperature = get_temperature()
 
 # defining constants
 h = 6.626e-34  # Planck's constant (Js)
