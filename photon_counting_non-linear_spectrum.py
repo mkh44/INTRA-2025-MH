@@ -31,7 +31,6 @@ source_spectrum = planck_law(wavelength, temperature)
 source_spectrum /= np.sum(source_spectrum)
 
 
-#Add absorption bands maybe (Gaussian)
 
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
 observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
@@ -41,19 +40,29 @@ observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum * filter_curve
 
+
+#Error bars
+photon_counts = observed_spectrum #assumes photon count ~ intensity
+std_dev = np.sqrt(photon_counts + photon_counts**2)
+std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
+
+
 # Create DataFrame
 spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
     'Source Spectrum': source_spectrum,
     'Atmospheric Absorption': absorption_spectrum (wavelength),
-    'Observed Spectrum': observed_spectrum})
+    'Observed Spectrum': observed_spectrum,
+    'FIltered Spectrum': filtered_spectrum,
+    'Standard Error': std_error,})
 
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # 1st y axis
 ax1.plot(wavelength, source_spectrum * 100, linestyle='--', label='Source Spectrum', color='red')
-ax1.plot(wavelength, observed_spectrum * 100, linewidth=2, label='Observed Spectrum')
+#ax1.plot(wavelength, observed_spectrum * 100, linewidth=2, label='Observed Spectrum')
+ax1.errorbar(wavelength, observed_spectrum * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', capsize=3)
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
 
 ax1.set_xlabel('Wavelength (nm)')
