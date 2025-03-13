@@ -27,15 +27,16 @@ def absorption_spectrum(wavelength):
     return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
-observed_spectrum = source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
+def observed_spectrum(wavelength, temperature):
+     return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
-filtered_spectrum = observed_spectrum * filter_curve
+filtered_spectrum = observed_spectrum(wavelength, temperature) * filter_curve
 
 # defining photon counts from intensity
-photon_counts = (observed_spectrum * (wavelength * 1e-9)) / (h * c)
+photon_counts = (observed_spectrum(wavelength, temperature) * (wavelength * 1e-9)) / (h * c)
 
 # Normalise photon counts to 100% scale
 photon_counts /= np.sum(photon_counts)
@@ -55,7 +56,7 @@ spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
     'Source Spectrum': source_spectrum (wavelength, temperature),
     'Atmospheric Absorption': absorption_spectrum (wavelength),
-    'Observed Spectrum': observed_spectrum,
+    'Observed Spectrum': observed_spectrum(wavelength, temperature),
     'Filtered Spectrum': filtered_spectrum,
     'Standard Error': std_error,})
 
@@ -66,7 +67,7 @@ fig, ax1 = plt.subplots(figsize=(10, 6))
 ax1.plot(wavelength, source_spectrum(wavelength, temperature) * 100, linestyle='--', label='Source Spectrum', color='red')
 
 # Plot observed spectrum with error bars
-ax1.errorbar(wavelength, observed_spectrum * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
+ax1.errorbar(wavelength, observed_spectrum(wavelength, temperature) * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
