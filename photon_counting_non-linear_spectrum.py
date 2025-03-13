@@ -27,7 +27,7 @@ def absorption_spectrum(wavelength):
     return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
-observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
+observed_spectrum = source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
@@ -52,7 +52,7 @@ std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed l
 # Create DataFrame
 spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
-    'Source Spectrum': source_spectrum,
+    'Source Spectrum': source_spectrum (wavelength, temperature),
     'Atmospheric Absorption': absorption_spectrum (wavelength),
     'Observed Spectrum': observed_spectrum,
     'Filtered Spectrum': filtered_spectrum,
@@ -61,10 +61,13 @@ spectral_data = pd.DataFrame({
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
-# 1st y axis
-ax1.plot(wavelength, source_spectrum * 100, linestyle='--', label='Source Spectrum', color='red')
-#ax1.plot(wavelength, observed_spectrum * 100, linewidth=2, label='Observed Spectrum')
+# Plot source spectrum
+ax1.plot(wavelength, source_spectrum(wavelength, temperature) * 100, linestyle='--', label='Source Spectrum', color='red')
+
+# Plot observed spectrum with error bars
 ax1.errorbar(wavelength, observed_spectrum * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
+
+# Plot filtered spectrum
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
 
 ax1.set_xlabel('Wavelength (nm)')
