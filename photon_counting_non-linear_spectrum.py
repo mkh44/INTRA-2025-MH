@@ -49,14 +49,26 @@ spectral_data = pd.DataFrame({
     'Observed Spectrum': observed_spectrum})
 
 # Plot data
-plt.figure(figsize=(10, 6))
-line1, = plt.plot(wavelength, source_spectrum, linestyle='--', label='Source Spectrum')
-line2, = plt.plot(wavelength, absorption_spectrum(wavelength), linestyle='-.', label='Atmospheric Absorption')
-line3, = plt.plot(wavelength, observed_spectrum, linewidth=2, label='Observed Spectrum')
-line4 = plt.plot(wavelength, filtered_spectrum, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
-plt.xlabel('Wavelength (nm)')
-plt.ylabel('Intensity / Absorption')
+fig, ax1 = plt.subplots(figsize=(10, 6))
+
+# 1st y axis
+line1, = ax1.plot(wavelength, source_spectrum, linestyle='--', label='Source Spectrum')
+line2, = ax1.plot(wavelength, absorption_spectrum(wavelength), linestyle='-.', label='Atmospheric Absorption')
+line3, = ax1.plot(wavelength, observed_spectrum, linewidth=2, label='Observed Spectrum')
+line4, = ax1.plot(wavelength, filtered_spectrum, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
+
+ax1.set_xlabel('Wavelength (nm)')
+ax1.set_ylabel('Intensity / Absorption')
 plt.title('Spectral Data Visualisation')
-plt.legend()
-plt.grid()
+ax1.set_ylim(0, 100)
+ax1.legend()
+ax1.grid()
+
+# 2nd y Axis
+ax2 = ax1.twinx()
+ax2.set_ylabel('Intensity (%)')
+ax2.set_ylim(0, 100)
+
+fig.tight_layout()
+
 plt.show()
