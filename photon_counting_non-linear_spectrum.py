@@ -7,21 +7,21 @@ import matplotlib.pyplot as plt
 wavelength = np.linspace(400, 800, 100)
 temperature = 5800
 
+#defining constants
+h = 6.626e-34  # Planck's constant (Js)
+c = 2.997e8  # Speed of light (m/s)
+k = 1.381e-23  # Boltzmann constant (J/K)
+
 #Define filter to remove light around target wavelength
 def wavelength_filter(wavelength, target_wavelength, bandwidth=65):
     return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
 
 # Define non-linear blackbody source spectrum function
 def planck_law(wavelength, temperature):
-    h = 6.626e-34 # Planck's constant (Js)
-    c = 2.997e8 # Speed of light (m/s)
-    k = 1.381e-23 # Boltzmann constant (J/K)
-
     return (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
 
 # Make atmospheric absorption spectrum
 def absorption_spectrum(wavelength):
-
     return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
 # Create blackbody spectrum for a given temperature
@@ -40,9 +40,9 @@ observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum * filter_curve
 
-
+photon_counts = (observed_spectrum * (wavelength * 1e-9)) / (h * c)
 #Error bars
-photon_counts = observed_spectrum #assumes photon count ~ intensity
+
 std_dev = np.sqrt(photon_counts + photon_counts**2)
 std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
 
@@ -53,7 +53,7 @@ spectral_data = pd.DataFrame({
     'Source Spectrum': source_spectrum,
     'Atmospheric Absorption': absorption_spectrum (wavelength),
     'Observed Spectrum': observed_spectrum,
-    'FIltered Spectrum': filtered_spectrum,
+    'Filtered Spectrum': filtered_spectrum,
     'Standard Error': std_error,})
 
 # Plot data
