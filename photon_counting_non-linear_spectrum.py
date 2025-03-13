@@ -13,7 +13,7 @@ c = 2.997e8  # Speed of light (m/s)
 k = 1.381e-23  # Boltzmann constant (J/K)
 
 # Define filter to remove light around target wavelength
-def wavelength_filter(wavelength, target_wavelength, bandwidth=65):
+def wavelength_filter(wavelength, target_wavelength, bandwidth):
     return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
 
 # Define non-linear blackbody source spectrum function
@@ -30,24 +30,24 @@ def absorption_spectrum(wavelength):
 def observed_spectrum(wavelength, temperature):
      return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
+# Function to calculate photon counts from intensity and normalise to 100% scale
+def photon_counts(spectrum, wavelength):
+    photon_counts = (observed_spectrum(wavelength, temperature) * (wavelength * 1e-9)) / (h * c)
+    photon_counts /= np.sum(photon_counts)
+    photon_counts *= 100
+    return photon_counts
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum(wavelength, temperature) * filter_curve
 
-# defining photon counts from intensity
-photon_counts = (observed_spectrum(wavelength, temperature) * (wavelength * 1e-9)) / (h * c)
-
-# Normalise photon counts to 100% scale
-photon_counts /= np.sum(photon_counts)
-photon_counts *= 100
 
 # Calculating expectation wavelength from photon counts
-expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
+expectation_wavelength = np.sum(wavelength * photon_counts(observed_spectrum(wavelength, temperature), wavelength)) / np.sum(photon_counts(observed_spectrum(wavelength, temperature), wavelength))
 print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
 
 # Error bars
-std_dev = np.sqrt(photon_counts + photon_counts**2)
+std_dev = np.sqrt(photon_counts(observed_spectrum(wavelength, temperature), wavelength) + photon_counts(observed_spectrum(wavelength, temperature), wavelength)**2)
 std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
 
 
