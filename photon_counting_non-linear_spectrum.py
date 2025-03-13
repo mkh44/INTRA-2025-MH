@@ -7,50 +7,44 @@ import matplotlib.pyplot as plt
 wavelength = np.linspace(400, 800, 100)
 temperature = 5800
 
-#defining constants
+# defining constants
 h = 6.626e-34  # Planck's constant (Js)
 c = 2.997e8  # Speed of light (m/s)
 k = 1.381e-23  # Boltzmann constant (J/K)
 
-#Define filter to remove light around target wavelength
+# Define filter to remove light around target wavelength
 def wavelength_filter(wavelength, target_wavelength, bandwidth=65):
     return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
 
 # Define non-linear blackbody source spectrum function
-def planck_law(wavelength, temperature):
-    return (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
+def source_spectrum(wavelength, temperature):
+    source_spectrum = (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
+    source_spectrum /= np.sum(source_spectrum)
+    return source_spectrum
 
 # Make atmospheric absorption spectrum
 def absorption_spectrum(wavelength):
     return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
-# Create blackbody spectrum for a given temperature
-source_spectrum = planck_law(wavelength, temperature)
-
-# Normalise source spectrum
-source_spectrum /= np.sum(source_spectrum)
-
-
-
 # Work out observed spectrum = of source_spectrum X atmospheric_absorption
 observed_spectrum = source_spectrum * (1 - absorption_spectrum(wavelength))
 
 
-#Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
+# Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum * filter_curve
 
-#defining photon counts from intensity
+# defining photon counts from intensity
 photon_counts = (observed_spectrum * (wavelength * 1e-9)) / (h * c)
 
-#Normalise photon counts to 100% scale
+# Normalise photon counts to 100% scale
 photon_counts /= np.sum(photon_counts)
 photon_counts *= 100
 
 # Calculating expectation wavelength from photon counts
 expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
 
-#Error bars
+# Error bars
 std_dev = np.sqrt(photon_counts + photon_counts**2)
 std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
 
