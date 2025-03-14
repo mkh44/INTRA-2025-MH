@@ -5,6 +5,11 @@ import matplotlib.pyplot as plt
 # Get wavelength values between 400 and 800. Kept in nm to avoid float result being used in absorption_spectrum calculation.
 wavelength = np.linspace(400, 800, 100)
 
+# defining constants
+h = 6.626e-34  # Planck's constant (Js)
+c = 2.997e8  # Speed of light (m/s)
+k = 1.381e-23  # Boltzmann constant (J/K)
+
 # Get user input for temperature, defaulting to 5780 K if no input given
 def get_temperature():
     while True:
@@ -20,16 +25,14 @@ def get_temperature():
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (5780 K)')
 
+# Defining variable temperature
 temperature = get_temperature()
 
-# defining constants
-h = 6.626e-34  # Planck's constant (Js)
-c = 2.997e8  # Speed of light (m/s)
-k = 1.381e-23  # Boltzmann constant (J/K)
 
 # Define filter to remove light around target wavelength
-def wavelength_filter(wavelength, target_wavelength, bandwidth):
-    return np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
+def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
+    filter_mask = np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
+    return spectrum * filter_mask
 
 # Define non-linear blackbody source spectrum function
 def source_spectrum(wavelength, temperature):
@@ -37,32 +40,39 @@ def source_spectrum(wavelength, temperature):
     source_spectrum /= np.sum(source_spectrum)
     return source_spectrum
 
-# Make atmospheric absorption spectrum
+# Defining function for atmospheric absorption spectrum
 def absorption_spectrum(wavelength):
-    return 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+    absorption_spectrum = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+    return absorption_spectrum
 
-# Work out observed spectrum = of source_spectrum X atmospheric_absorption
+# Defining function for observed spectrum = of source_spectrum X atmospheric_absorption
 def observed_spectrum(wavelength, temperature):
      return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
-def photon_counts(spectrum, wavelength):
-    photon_counts = (observed_spectrum(wavelength, temperature) * (wavelength * 1e-9)) / (h * c)
+def get_photon_counts(spectrum, wavelength):
+    photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
     photon_counts /= np.sum(photon_counts)
     photon_counts *= 100
     return photon_counts
 
+# Defining created spectra
+
+
+# Calculating photon counts
+photon_counts = get_photon_counts(observed_spectrum(wavelength, temperature), wavelength)
+
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filter_curve = wavelength_filter(wavelength, target_wavelength=685, bandwidth=65)
+filter_curve = wavelength_filter(observed_spectrum(wavelength, temperature), wavelength, target_wavelength=685, bandwidth=65)
 filtered_spectrum = observed_spectrum(wavelength, temperature) * filter_curve
 
 
 # Calculating expectation wavelength from photon counts
-expectation_wavelength = np.sum(wavelength * photon_counts(observed_spectrum(wavelength, temperature), wavelength)) / np.sum(photon_counts(observed_spectrum(wavelength, temperature), wavelength))
+expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
 print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
 
 # Error bars
-std_dev = np.sqrt(photon_counts(observed_spectrum(wavelength, temperature), wavelength) + photon_counts(observed_spectrum(wavelength, temperature), wavelength)**2)
+std_dev = np.sqrt(photon_counts + photon_counts**2)
 std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
 
 
