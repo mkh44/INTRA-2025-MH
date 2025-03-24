@@ -32,7 +32,9 @@ temperature = get_temperature()
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
     filter_mask = np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
-    return spectrum * filter_mask
+    filtered_spectrum = spectrum * filter_mask
+    #filtered_spectrum /= np.sum(filtered_spectrum)
+    return filtered_spectrum
 
 # Define non-linear blackbody source spectrum function
 def source_spectrum(wavelength, temperature):
@@ -63,7 +65,7 @@ observed_spec = observed_spectrum(wavelength, temperature)
 photon_counts = get_photon_counts(observed_spec, wavelength)
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filtered_spectrum = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
+filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
 
 
 # Calculating expectation wavelength from photon counts
@@ -81,22 +83,22 @@ spectral_data = pd.DataFrame({
     'Source Spectrum': source_spec,
     'Atmospheric Absorption': absorption_spec,
     'Observed Spectrum': observed_spec,
-    'Filtered Spectrum': filtered_spectrum,
+    'Filtered Spectrum': filtered_spec,
     'Standard Error': std_error,})
 
 #Photon counts scaling
 source_counts = get_photon_counts(source_spec, wavelength)
 observed_counts = get_photon_counts(observed_spec, wavelength)
-filtered_counts = get_photon_counts(filtered_spectrum, wavelength)
+filtered_counts = get_photon_counts(filtered_spec, wavelength)
 
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # Plot source spectrum
-ax1.plot(wavelength, source_spec * 100, linestyle='--', label='Source Spectrum', color='red')
+ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', color='red')
 
 # Plot observed spectrum with error bars
-ax1.errorbar(wavelength, observed_spec * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
+ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
@@ -104,7 +106,7 @@ ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Fi
 ax1.set_xlabel('Wavelength (nm)')
 ax1.set_ylabel('Photon Counts')
 
-ax1.set_ylim(0, np.max(source_counts) * 1.2)
+ax1.set_ylim(0, max(np.max(source_counts), np.max(observed_counts), np.max(filtered_counts)) * 1.2)
 ax1.legend(loc='upper left')
 ax1.grid()
 
