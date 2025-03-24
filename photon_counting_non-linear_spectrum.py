@@ -56,15 +56,15 @@ def get_photon_counts(spectrum, wavelength):
     photon_counts *= 100
     return photon_counts
 
-# Defining created spectra
-
-
-# Calculating photon counts
-photon_counts = get_photon_counts(observed_spectrum(wavelength, temperature), wavelength)
+# Defining variables
+source_spec = source_spectrum(wavelength, temperature)
+absorption_spec = absorption_spectrum(wavelength)
+observed_spec = observed_spectrum(wavelength, temperature)
+photon_counts = get_photon_counts(observed_spec, wavelength)
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filter_curve = wavelength_filter(observed_spectrum(wavelength, temperature), wavelength, target_wavelength=685, bandwidth=65)
-filtered_spectrum = observed_spectrum(wavelength, temperature) * filter_curve
+filter_curve = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
+filtered_spectrum = observed_spec * filter_curve
 
 
 # Calculating expectation wavelength from photon counts
@@ -79,9 +79,9 @@ std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed l
 # Create DataFrame
 spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
-    'Source Spectrum': source_spectrum (wavelength, temperature),
-    'Atmospheric Absorption': absorption_spectrum (wavelength),
-    'Observed Spectrum': observed_spectrum(wavelength, temperature),
+    'Source Spectrum': source_spec,
+    'Atmospheric Absorption': absorption_spec,
+    'Observed Spectrum': observed_spect,
     'Filtered Spectrum': filtered_spectrum,
     'Standard Error': std_error,})
 
@@ -89,10 +89,10 @@ spectral_data = pd.DataFrame({
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # Plot source spectrum
-ax1.plot(wavelength, source_spectrum(wavelength, temperature) * 100, linestyle='--', label='Source Spectrum', color='red')
+ax1.plot(wavelength, source_spec * 100, linestyle='--', label='Source Spectrum', color='red')
 
 # Plot observed spectrum with error bars
-ax1.errorbar(wavelength, observed_spectrum(wavelength, temperature) * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
+ax1.errorbar(wavelength, observed_spec * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
@@ -106,7 +106,7 @@ ax1.grid()
 
 # 2nd y Axis
 ax2 = ax1.twinx()
-ax2.plot(wavelength, absorption_spectrum(wavelength) * 100, linestyle='-.', label='Atmospheric Absorption', color='purple')
+ax2.plot(wavelength, absorption_spec * 100, linestyle='-.', label='Atmospheric Absorption', color='purple')
 ax2.set_ylabel('Intensity (%)')
 ax2.set_ylim(0, 110)
 ax2.legend(loc='upper right')
