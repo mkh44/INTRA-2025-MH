@@ -85,6 +85,11 @@ spectral_data = pd.DataFrame({
     'Filtered Spectrum': filtered_spectrum,
     'Standard Error': std_error,})
 
+#Photon counts scaling
+source_counts = get_photon_counts(source_spec, wavelength)
+observed_counts = get_photon_counts(observed_spec, wavelength)
+filtered_counts = get_photon_counts(filtered_spectrum, wavelength)
+
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
@@ -98,9 +103,9 @@ ax1.errorbar(wavelength, observed_spec * 100, yerr=std_error, fmt='o', markersiz
 ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
 
 ax1.set_xlabel('Wavelength (nm)')
-ax1.set_ylabel('Intensity (%)')
+ax1.set_ylabel('Photon Counts')
 
-ax1.set_ylim(0, np.max(source_spec) * 110) # this is set to 110 so source spectrum is visible
+ax1.set_ylim(0, np.max(source_spec) * 110)
 ax1.legend(loc='upper left')
 ax1.grid()
 
