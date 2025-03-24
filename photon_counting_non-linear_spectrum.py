@@ -95,10 +95,10 @@ filtered_counts = get_photon_counts(filtered_spec, wavelength)
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # Plot source spectrum
-ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', color='#415dc4')
+ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', color='blue')
 
 # Plot observed spectrum with error bars
-ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='#23a0de', capsize=3)
+ax1.errorbar(wavelength, observed_counts, color='#23a0de', yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='#23a0de', capsize=3)
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#283c82')
@@ -109,14 +109,11 @@ ax1.set_ylabel('Photon Counts')
 
 ax1.set_ylim(0, max(np.max(source_counts), np.max(observed_counts), np.max(filtered_counts)) * 1.2)
 ax1.legend(loc='upper left')
-ax1.grid()
+ax1.grid(False)
 
 #Axis colours
 ax1.spines['left'].set_color('blue')
 ax1.tick_params(axis='y', colors='blue')
-
-#Getting rid of gridlines
-ax1.grid(False)
 
 
 # 2nd y Axis
