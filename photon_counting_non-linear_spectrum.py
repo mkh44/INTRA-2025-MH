@@ -63,8 +63,7 @@ observed_spec = observed_spectrum(wavelength, temperature)
 photon_counts = get_photon_counts(observed_spec, wavelength)
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filter_curve = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
-filtered_spectrum = observed_spec * filter_curve
+filtered_spectrum = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
 
 
 # Calculating expectation wavelength from photon counts
@@ -73,7 +72,7 @@ print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength
 
 # Error bars
 std_dev = np.sqrt(photon_counts + photon_counts**2)
-std_error = std_dev / np.sqrt(1000) #assumes 1000 measurements (can be changed later)
+std_error = std_dev / np.sum(photon_counts)
 
 
 # Create DataFrame
@@ -100,12 +99,12 @@ ax1.plot(wavelength, source_spec * 100, linestyle='--', label='Source Spectrum',
 ax1.errorbar(wavelength, observed_spec * 100, yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='black', capsize=3)
 
 # Plot filtered spectrum
-ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
+ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum')
 
 ax1.set_xlabel('Wavelength (nm)')
 ax1.set_ylabel('Photon Counts')
 
-ax1.set_ylim(0, np.max(source_spec) * 110)
+ax1.set_ylim(0, np.max(source_counts) * 1.2)
 ax1.legend(loc='upper left')
 ax1.grid()
 
