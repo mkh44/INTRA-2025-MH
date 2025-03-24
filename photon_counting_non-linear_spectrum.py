@@ -81,7 +81,7 @@ spectral_data = pd.DataFrame({
     'Wavelength (nm)': wavelength,
     'Source Spectrum': source_spec,
     'Atmospheric Absorption': absorption_spec,
-    'Observed Spectrum': observed_spect,
+    'Observed Spectrum': observed_spec,
     'Filtered Spectrum': filtered_spectrum,
     'Standard Error': std_error,})
 
@@ -100,7 +100,7 @@ ax1.plot(wavelength, filtered_spectrum * 100, linewidth=2, linestyle="dotted", l
 ax1.set_xlabel('Wavelength (nm)')
 ax1.set_ylabel('Intensity (%)')
 
-ax1.set_ylim(0, 3) # this is set to 110 so source spectrum is visible
+ax1.set_ylim(0, np.max(source_spec) * 110) # this is set to 110 so source spectrum is visible
 ax1.legend(loc='upper left')
 ax1.grid()
 
