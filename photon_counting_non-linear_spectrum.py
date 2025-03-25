@@ -53,8 +53,9 @@ def absorption_spectrum(wavelength):
     rayleigh_scatter /= np.max(rayleigh_scatter) #normalising to max value of 1
 
     #additional absorption effects like ozone absorption bands to be added here
+    additional_absorption = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
 
-    absorption = 0.6 * rayleigh_scatter # + weighted absorption bands
+    absorption = 0.6 * rayleigh_scatter + 0.4 * additional_absorption
     return np.clip(absorption, 0, 1)
 
 # Defining function for observed spectrum = of source_spectrum X atmospheric_absorption
