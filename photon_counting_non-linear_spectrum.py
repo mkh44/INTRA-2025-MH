@@ -28,7 +28,6 @@ def get_temperature():
 # Defining variable temperature
 temperature = get_temperature()
 
-
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
     filter_mask = np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
@@ -43,9 +42,20 @@ def source_spectrum(wavelength, temperature):
     return source_spectrum
 
 # Defining function for atmospheric absorption spectrum
+#def absorption_spectrum(wavelength):
+    #absorption_spectrum = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+    #return absorption_spectrum
+
+# Defining function for atmospheric absorption spectrum based on rayleigh scattering
 def absorption_spectrum(wavelength):
-    absorption_spectrum = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
-    return absorption_spectrum
+    #normalising rayleigh scattering component
+    rayleigh_scatter = (1 / wavelength**4)
+    rayleigh_scatter /= np.max(rayleigh_scatter) #normalising to max value of 1
+
+    #additional absorption effects like ozone absorption bands to be added here
+
+    absorption = 0.6 * rayleigh_scatter # + weighted absorption bands
+    return np.clip(absorption, 0, 1)
 
 # Defining function for observed spectrum = of source_spectrum X atmospheric_absorption
 def observed_spectrum(wavelength, temperature):
@@ -101,7 +111,7 @@ ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', col
 ax1.errorbar(wavelength, observed_counts, color='#23a0de', yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='#23a0de', capsize=3)
 
 # Plot filtered spectrum
-ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#283c82')
+ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#4b56f2')
 
 ax1.set_xlabel('Wavelength (nm)')
 ax1.set_ylabel('Photon Counts')
