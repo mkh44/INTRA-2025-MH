@@ -106,10 +106,13 @@ filtered_counts = get_photon_counts(filtered_spec, wavelength)
 fig, ax1 = plt.subplots(figsize=(10, 6))
 
 # Plot source spectrum
-ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', color='blue')
+ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', color='#23a0de')
 
-# Plot observed spectrum with error bars
-ax1.errorbar(wavelength, observed_counts, color='#23a0de', yerr=std_error, fmt='o', markersize=2, label='Observed Spectrum (%) with Error', ecolor='#23a0de', capsize=3)
+# Plot observed spectrum
+ax1.plot(wavelength, observed_counts, '-', markersize=2, color='blue', label='Observed Spectrum')
+
+# plot error bars with increased transparency
+ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='none', ecolor='blue', capsize=3, alpha=0.2, label='Observed Spectrum Error')
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#4b56f2')
