@@ -84,8 +84,8 @@ expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_coun
 print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
 
 # Error bars
-std_dev = np.sqrt(photon_counts + photon_counts**2)
-std_error = std_dev / photon_counts
+std_error = np.sqrt(photon_counts) #poisson std dev = root of mean or root of no of events
+#std_error = std_dev / photon_counts
 
 
 # Create DataFrame
