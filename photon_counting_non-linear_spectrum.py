@@ -85,7 +85,7 @@ print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength
 
 # Error bars
 std_dev = np.sqrt(photon_counts + photon_counts**2)
-std_error = std_dev / np.sum(photon_counts)
+std_error = std_dev / photon_counts
 
 
 # Create DataFrame
