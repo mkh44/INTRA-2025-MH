@@ -78,10 +78,10 @@ def observed_spectrum(wavelength, temperature):
      return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
-def get_photon_counts(spectrum, wavelength):
+def get_photon_counts(spectrum, wavelength, total_photons=1e6):
     photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
     photon_counts /= np.sum(photon_counts)
-    photon_counts *= 100
+    photon_counts *= total_photons
     return photon_counts
 
 # Defining variables
@@ -111,6 +111,8 @@ spectral_data = pd.DataFrame({
     'Observed Spectrum': observed_spec,
     'Filtered Spectrum': filtered_spec,
     'Standard Error': std_error,})
+
+photon_number = get_photon_number()
 
 #Photon counts scaling
 source_counts = get_photon_counts(source_spec, wavelength)
