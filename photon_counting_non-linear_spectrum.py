@@ -28,6 +28,21 @@ def get_temperature():
 # Defining variable temperature
 temperature = get_temperature()
 
+# get photon number input from user
+def get_photon_number():
+    while True:
+        user_input = input('Enter total number of photons (default: 1e6): ').strip()
+        if user_input == '':
+            photon_number = 1e6
+            print(f'Using default photon count: {int(photon_number)} photons')
+            return photon_number
+        try:
+            photon_number = float(user_input)
+            print(f'Using default photon count: {int(photon_number)} photons')
+            return photon_number
+        except ValueError:
+            print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
+
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
     filter_mask = np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
