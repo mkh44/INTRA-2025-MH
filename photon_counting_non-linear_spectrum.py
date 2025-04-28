@@ -84,8 +84,8 @@ def get_photon_counts(spectrum, wavelength, photon_number):
     return photon_counts
 
 #Get user inputs
-photon_number = get_photon_number()
 temperature = get_temperature()
+photon_number = get_photon_number()
 
 # Calculate spectra
 source_spec = source_spectrum(wavelength, temperature)
@@ -129,7 +129,7 @@ ax1.plot(wavelength, source_counts, linestyle='--', label='Source Spectrum', col
 ax1.plot(wavelength, observed_counts, '-', markersize=2, color='#23a0de', label='Observed Spectrum')
 
 # plot error bars with increased transparency
-ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='none', ecolor='#23a0de', capsize=3, alpha=0.2, label='Observed Spectrum Error')
+ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='none', ecolor='#23a0de', capsize=3, alpha=0.5, label='Observed Spectrum Error')
 
 # Plot filtered spectrum
 ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#3262a8')
@@ -159,5 +159,6 @@ ax2.spines['right'].set_color('red')
 ax2.tick_params(axis='y', colors='#d13d32')
 ax2.spines['left'].set_visible(False) # this gets rid of black overlay on left hand y-axis
 
-plt.title('Spectral Data Visualisation')
+plt.title(f'Spectral Data Visualisation\nTotal Photons: {int(photon_number):,}')
+plt.tight_layout()
 plt.show()
