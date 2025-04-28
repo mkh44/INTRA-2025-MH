@@ -102,7 +102,7 @@ observed_counts = get_photon_counts(observed_spec, wavelength, photon_number)
 filtered_counts = get_photon_counts(filtered_spec, wavelength, photon_number)
 
 # Error bars
-std_error = np.sqrt(photon_counts) #poisson std dev = root of mean or root of no of events
+std_error = np.sqrt(observed_counts) #poisson std dev = root of mean or root of no of events
 #std_error = std_dev / photon_counts
 
 # Calculating expectation wavelength from photon counts
