@@ -43,6 +43,8 @@ def get_photon_number():
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
 
+photon_number = get_photon_number()
+
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
     filter_mask = np.where((wavelength > target_wavelength - bandwidth) & (wavelength < target_wavelength + bandwidth), 0, 1)
@@ -78,10 +80,10 @@ def observed_spectrum(wavelength, temperature):
      return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
-def get_photon_counts(spectrum, wavelength, total_photons=1e6):
-    photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
+def get_photon_counts(spectrum, wavelength, photon_number):
+    photon_counts = (spectrum * (wavelength * photon_number)) / (h * c)
     photon_counts /= np.sum(photon_counts)
-    photon_counts *= total_photons
+    photon_counts *= photon_number
     return photon_counts
 
 # Defining variables
@@ -112,7 +114,7 @@ spectral_data = pd.DataFrame({
     'Filtered Spectrum': filtered_spec,
     'Standard Error': std_error,})
 
-photon_number = get_photon_number()
+
 
 #Photon counts scaling
 source_counts = get_photon_counts(source_spec, wavelength)
