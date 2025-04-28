@@ -48,10 +48,12 @@ def get_atmosphere_model():
         user_input = input('Choose atmosphere model: (1 or 2, default 2): ').strip()
         if user_input == '' or user_input == '2':
             print('Using Rayleigh + Ozone model')
-            return 'rayleigh_ozone'
+            model = 'rayleigh_ozone'
+            return model
         elif user_input == '1':
             print('Using Rayleigh model')
-            return 'rayleigh'
+            model = 'rayleigh'
+            return model
         else:
             print('Invalid input. Please enter 1 or 2.')
 
@@ -106,8 +108,7 @@ def absorption_spectrum(wavelength, model):
 
 # Defining function for observed spectrum = of source_spectrum X atmospheric_absorption
 def observed_spectrum(wavelength, temperature):
-     return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
-
+     return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength, model))
 
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
@@ -120,6 +121,9 @@ def get_photon_counts(spectrum, wavelength, photon_number):
 #Get user inputs
 temperature = get_temperature()
 photon_number = get_photon_number()
+model = get_atmosphere_model()
+filters = get_filters()
+
 
 # Calculate spectra
 source_spec = source_spectrum(wavelength, temperature)
