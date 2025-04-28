@@ -36,7 +36,7 @@ def get_photon_number():
             return photon_number
         try:
             photon_number = float(user_input)
-            print(f'Using default photon count: {int(photon_number)} photons')
+            print(f'Using photon count: {int(photon_number)} photons')
             return photon_number
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
