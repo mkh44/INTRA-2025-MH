@@ -25,8 +25,6 @@ def get_temperature():
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (5780 K)')
 
-# Defining variable temperature
-temperature = get_temperature()
 
 # get photon number input from user
 def get_photon_number():
@@ -43,7 +41,6 @@ def get_photon_number():
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
 
-photon_number = get_photon_number()
 
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
@@ -81,12 +78,16 @@ def observed_spectrum(wavelength, temperature):
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
 def get_photon_counts(spectrum, wavelength, photon_number):
-    photon_counts = (spectrum * (wavelength * photon_number)) / (h * c)
+    photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
     photon_counts /= np.sum(photon_counts)
     photon_counts *= photon_number
     return photon_counts
 
-# Defining variables
+#Get user inputs
+photon_number = get_photon_number()
+temperature = get_temperature()
+
+# Calculate spectra
 source_spec = source_spectrum(wavelength, temperature)
 absorption_spec = absorption_spectrum(wavelength)
 observed_spec = observed_spectrum(wavelength, temperature)
@@ -95,15 +96,18 @@ photon_counts = get_photon_counts(observed_spec, wavelength, photon_number)
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
 
-
-# Calculating expectation wavelength from photon counts
-expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
-print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
+#Photon counts scaling
+source_counts = get_photon_counts(source_spec, wavelength, photon_number)
+observed_counts = get_photon_counts(observed_spec, wavelength, photon_number)
+filtered_counts = get_photon_counts(filtered_spec, wavelength, photon_number)
 
 # Error bars
 std_error = np.sqrt(photon_counts) #poisson std dev = root of mean or root of no of events
 #std_error = std_dev / photon_counts
 
+# Calculating expectation wavelength from photon counts
+expectation_wavelength = np.sum(wavelength * photon_counts) / np.sum(photon_counts)
+print(f'Expectation wavelength (photon counts weighted): {expectation_wavelength:.2f} nm')
 
 # Create DataFrame
 spectral_data = pd.DataFrame({
@@ -114,12 +118,6 @@ spectral_data = pd.DataFrame({
     'Filtered Spectrum': filtered_spec,
     'Standard Error': std_error,})
 
-
-
-#Photon counts scaling
-source_counts = get_photon_counts(source_spec, wavelength, photon_number)
-observed_counts = get_photon_counts(observed_spec, wavelength, photon_number)
-filtered_counts = get_photon_counts(filtered_spec, wavelength, photon_number)
 
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
