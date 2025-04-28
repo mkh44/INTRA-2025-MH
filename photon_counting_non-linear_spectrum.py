@@ -41,6 +41,37 @@ def get_photon_number():
         except ValueError:
             print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
 
+# Get user input atmosphere model
+def get_atmosphere_model():
+    while True:
+        print('Atmosphere models: (1) Rayleigh, (2) Rayleigh + Ozone')
+        user_input = input('Choose atmosphere model: (1 or 2, default 2): ').strip()
+        if user_input == '' or user_input == '2':
+            print('Using Rayleigh + Ozone model')
+            return 'rayleigh_ozone'
+        elif user_input == '1':
+            print('Using Rayleigh model')
+            return 'rayleigh'
+        else:
+            print('Invalid input. Please enter 1 or 2.')
+
+# Get filter input
+def get_filters():
+    filters = []
+    user_input = input('How many filters would you like to apply? (0-2), default 1): ').strip()
+    if user_input == '':
+        num_filters = 1
+    else:
+        try:
+            num_filters = int(user_input)
+        except ValueError:
+            print('Invalid input. Please enter a valid number of filters')
+
+    for i in range(num_filters):
+        target_wavelength = float(input(f'Enter target wavelength for filter {i+1} in nm:').strip())
+        bandwidth = float(input(f'Enter bandwidth for filter {i+1} in nm:').strip())
+        filters.append((target_wavelength, bandwidth))
+    return filters
 
 # Define filter to remove light around target wavelength
 def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
@@ -61,7 +92,7 @@ def source_spectrum(wavelength, temperature):
     #return absorption_spectrum
 
 # Defining function for atmospheric absorption spectrum based on rayleigh scattering
-def absorption_spectrum(wavelength):
+def absorption_spectrum(wavelength, model):
     #normalising rayleigh scattering component
     rayleigh_scatter = (1 / wavelength**4)
     rayleigh_scatter /= np.max(rayleigh_scatter) #normalising to max value of 1
