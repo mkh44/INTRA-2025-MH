@@ -90,7 +90,7 @@ def get_photon_counts(spectrum, wavelength, photon_number):
 source_spec = source_spectrum(wavelength, temperature)
 absorption_spec = absorption_spectrum(wavelength)
 observed_spec = observed_spectrum(wavelength, temperature)
-photon_counts = get_photon_counts(observed_spec, wavelength)
+photon_counts = get_photon_counts(observed_spec, wavelength, photon_number)
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
 filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
@@ -117,9 +117,9 @@ spectral_data = pd.DataFrame({
 
 
 #Photon counts scaling
-source_counts = get_photon_counts(source_spec, wavelength)
-observed_counts = get_photon_counts(observed_spec, wavelength)
-filtered_counts = get_photon_counts(filtered_spec, wavelength)
+source_counts = get_photon_counts(source_spec, wavelength, photon_number)
+observed_counts = get_photon_counts(observed_spec, wavelength, photon_number)
+filtered_counts = get_photon_counts(filtered_spec, wavelength, photon_number)
 
 # Plot data
 fig, ax1 = plt.subplots(figsize=(10, 6))
