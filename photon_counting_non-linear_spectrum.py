@@ -96,16 +96,19 @@ def absorption_spectrum(wavelength, model):
     #normalising rayleigh scattering component
     rayleigh_scatter = (1 / wavelength**4)
     rayleigh_scatter /= np.max(rayleigh_scatter) #normalising to max value of 1
+    if model == 'rayleigh':
+        absorption = rayleigh_scatter
+    elif model == 'rayleigh_ozone':
+        ozone_band = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
+        absorption = 0.6 * rayleigh_scatter + 0.4 * ozone_band
 
-    #additional absorption effects like ozone absorption bands to be added here
-    additional_absorption = 0.5 + 0.4 * np.sin((wavelength - 400) * np.pi / 200)
-
-    absorption = 0.6 * rayleigh_scatter + 0.4 * additional_absorption
     return np.clip(absorption, 0, 1)
 
 # Defining function for observed spectrum = of source_spectrum X atmospheric_absorption
 def observed_spectrum(wavelength, temperature):
      return source_spectrum(wavelength, temperature) * (1 - absorption_spectrum(wavelength))
+
+
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
 def get_photon_counts(spectrum, wavelength, photon_number):
@@ -120,12 +123,12 @@ photon_number = get_photon_number()
 
 # Calculate spectra
 source_spec = source_spectrum(wavelength, temperature)
-absorption_spec = absorption_spectrum(wavelength)
+absorption_spec = absorption_spectrum(wavelength, model)
 observed_spec = observed_spectrum(wavelength, temperature)
 photon_counts = get_photon_counts(observed_spec, wavelength, photon_number)
 
 # Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength=685, bandwidth=65)
+filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength, bandwidth)
 
 #Photon counts scaling
 source_counts = get_photon_counts(source_spec, wavelength, photon_number)
