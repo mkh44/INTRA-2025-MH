@@ -70,9 +70,22 @@ def get_filters():
             print('Invalid input. Please enter a valid number of filters')
 
     for i in range(num_filters):
-        target_wavelength = float(input(f'Enter target wavelength for filter {i+1} in nm:').strip())
-        bandwidth = float(input(f'Enter bandwidth for filter {i+1} in nm:').strip())
-        filters.append((target_wavelength, bandwidth))
+        target_input = float(input(f'Enter target wavelength for filter {i+1} in nm (default: 685):').strip())
+        try:
+            target_wavelength = float(target_input) if target_input != '' else 685
+        except ValueError:
+            print('Invalid input. Using default: 685')
+            target_wavelength = 685
+
+        bandwidth_input = float(input(f'Enter bandwidth for filter {i+1} in nm: (default: 65):').strip())
+        try:
+            bandwidth = float(bandwidth_input) if bandwidth_input != '' else 65
+
+        except ValueError:
+            print('Invalid input. Using default: 65')
+
+        filters.append([target_wavelength, bandwidth])
+
     return filters
 
 # Define filter to remove light around target wavelength
@@ -131,8 +144,10 @@ absorption_spec = absorption_spectrum(wavelength, model)
 observed_spec = observed_spectrum(wavelength, temperature)
 photon_counts = get_photon_counts(observed_spec, wavelength, photon_number)
 
-# Apply filter to remove red light (620 - 750 nm) so 685 nm +/- 65
-filtered_spec = wavelength_filter(observed_spec, wavelength, target_wavelength, bandwidth)
+# Apply filters
+filtered_spec = observed_spec.copy()
+for target_wavelength, bandwidth in filters:
+    filtered_spec = wavelength_filter(filtered_spec, wavelength, target_wavelength, bandwidth)
 
 #Photon counts scaling
 source_counts = get_photon_counts(source_spec, wavelength, photon_number)
