@@ -10,82 +10,75 @@ h = 6.626e-34  # Planck's constant (Js)
 c = 2.997e8  # Speed of light (m/s)
 k = 1.381e-23  # Boltzmann constant (J/K)
 
+# Generic function to get user input and default to value if none given
+def get_input_w_default(prompt: str, default_value: float, variable_name) -> float:
+    user_input = input(f'{prompt}: (default: {default_value}): ').strip()
+    if user_input == '':
+        print(f'The {variable_name} is {default_value}.')
+        return default_value
+    try:
+        print(f'The {variable_name} is {user_input}.')
+        return float(user_input)
+    except ValueError:
+        print(f'Invalid input. Please enter a valid number or press enter for default value ({default_value})')
+        return get_input_w_default(prompt, default_value)
+
+
 # Get user input for temperature, defaulting to 5780 K if no input given
-def get_temperature():
-    while True:
-        user_input = input('Enter temperature of blackbody in Kelvin (default; 5780 K): ').strip()
-        if user_input == '': # default value if input is empty
-            temperature = 5780
-            print(f'The temperature is: {temperature} K')
-            return 5780
-        try:
-            temperature = float(user_input)
-            print(f'The temperature is: {temperature} K')
-            return temperature
-        except ValueError:
-            print('Invalid input. Please enter a valid number or press enter for default (5780 K)')
+# def get_temperature():
+#     while True:
+#         user_input = input('Enter temperature of blackbody in Kelvin (default; 5780 K): ').strip()
+#         if user_input == '': # default value if input is empty
+#             temperature = 5780
+#             print(f'The temperature is: {temperature} K')
+#             return 5780
+#         try:
+#             temperature = float(user_input)
+#             print(f'The temperature is: {temperature} K')
+#             return temperature
+#         except ValueError:
+#             print('Invalid input. Please enter a valid number or press enter for default (5780 K)')
 
 
-# get photon number input from user
-def get_photon_number():
-    while True:
-        user_input = input('Enter total number of photons (default: 1e6): ').strip()
-        if user_input == '':
-            photon_number = 1e6
-            print(f'Using default photon count: {int(photon_number)} photons')
-            return photon_number
-        try:
-            photon_number = float(user_input)
-            print(f'Using photon count: {int(photon_number)} photons')
-            return photon_number
-        except ValueError:
-            print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
+# # get photon number input from user
+# def get_photon_number():
+#     while True:
+#         user_input = input('Enter total number of photons (default: 1e6): ').strip()
+#         if user_input == '':
+#             photon_number = 1e6
+#             print(f'Using default photon count: {int(photon_number)} photons')
+#             return photon_number
+#         try:
+#             photon_number = float(user_input)
+#             print(f'Using photon count: {int(photon_number)} photons')
+#             return photon_number
+#         except ValueError:
+#             print('Invalid input. Please enter a valid number or press enter for default (1e6 photons)')
 
 # Get user input atmosphere model
 def get_atmosphere_model():
     while True:
         print('Atmosphere models: (1) Rayleigh, (2) Rayleigh + Ozone')
-        user_input = input('Choose atmosphere model: (1 or 2, default 2): ').strip()
-        if user_input == '' or user_input == '2':
-            print('Using Rayleigh + Ozone model')
+        user_input = get_input_w_default('Choose atmosphere model', '2', 'atmospheric model')
+        if user_input == '2':
             model = 'rayleigh_ozone'
             return model
         elif user_input == '1':
-            print('Using Rayleigh model')
             model = 'rayleigh'
             return model
-        else:
-            print('Invalid input. Please enter 1 or 2.')
+
 
 # Get filter input
 def get_filters():
     filters = []
-    user_input = input('How many filters would you like to apply? (0-2), default 1): ').strip()
-    if user_input == '':
-        num_filters = 1
-    else:
-        try:
-            num_filters = int(user_input)
-        except ValueError:
-            print('Invalid input. Please enter a valid number of filters')
+    num_filters = int(get_input_w_default('How many filters would you like to apply? (0-2)', 1, 'number of filters'))
 
     for i in range(num_filters):
-        target_input = float(input(f'Enter target wavelength for filter {i+1} in nm (default: 685):').strip())
-        try:
-            target_wavelength = float(target_input) if target_input != '' else 685
-        except ValueError:
-            print('Invalid input. Using default: 685')
-            target_wavelength = 685
+        target_wavelength = get_input_w_default(f'Enter target wavelength for filter {i+1} in nm', 685, 'target wavelength')
 
-        bandwidth_input = float(input(f'Enter bandwidth for filter {i+1} in nm: (default: 65):').strip())
-        try:
-            bandwidth = float(bandwidth_input) if bandwidth_input != '' else 65
-
-        except ValueError:
-            print('Invalid input. Using default: 65')
+        bandwidth = get_input_w_default(f'Enter bandwidth for filter {i+1} in nm', 65, 'bandwidth')
 
         filters.append([target_wavelength, bandwidth])
-
     return filters
 
 # Define filter to remove light around target wavelength
@@ -132,8 +125,8 @@ def get_photon_counts(spectrum, wavelength, photon_number):
     return photon_counts
 
 #Get user inputs
-temperature = get_temperature()
-photon_number = get_photon_number()
+temperature = get_input_w_default('Enter temperature of object in Kelvin', 5780, 'temperature')
+photon_number = get_input_w_default('Enter total number of photons', 1e6, 'number of photons')
 model = get_atmosphere_model()
 filters = get_filters()
 
