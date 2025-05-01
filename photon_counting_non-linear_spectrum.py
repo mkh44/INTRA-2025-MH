@@ -59,11 +59,11 @@ def get_input_w_default(prompt: str, default_value: float, variable_name) -> flo
 def get_atmosphere_model():
     while True:
         print('Atmosphere models: (1) Rayleigh, (2) Rayleigh + Ozone')
-        user_input = get_input_w_default('Choose atmosphere model', '2', 'atmospheric model')
-        if user_input == '2':
+        user_input = int(get_input_w_default('Choose atmosphere model', 2, 'atmospheric model'))
+        if user_input == 2:
             model = 'rayleigh_ozone'
             return model
-        elif user_input == '1':
+        elif user_input == 1:
             model = 'rayleigh'
             return model
 
