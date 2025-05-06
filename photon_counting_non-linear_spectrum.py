@@ -181,7 +181,7 @@ ax1.errorbar(wavelength, observed_counts, yerr=std_error, fmt='none', ecolor='#2
 ax1.plot(wavelength, filtered_counts, linewidth=2, linestyle="dotted", label='Filtered Spectrum', color='#3262a8')
 
 ax1.set_xlabel('Wavelength (nm)')
-ax1.set_ylabel('Photon Counts')
+ax1.set_ylabel('Photon Counts', color='blue')
 
 
 ax1.set_ylim(0, max(np.max(source_counts), np.max(observed_counts), np.max(filtered_counts)) * 1.2)
@@ -194,15 +194,15 @@ ax1.tick_params(axis='y', colors='blue')
 
 # 2nd y Axis
 ax2 = ax1.twinx()
-ax2.plot(wavelength, absorption_spec * 100, linestyle='-.', label='Atmospheric Absorption', color='red')
-ax2.set_ylabel('Intensity (%)')
+ax2.plot(wavelength, absorption_spec * 100, linestyle='-.', label='Atmospheric Absorption', color='#8b20a8')
+ax2.set_ylabel('Intensity (%)', color='#8b20a8')
 ax2.set_ylim(0, 110)
 ax2.legend(loc='upper right')
 ax2.grid(False)
 
 #Axis colour
-ax2.spines['right'].set_color('red')
-ax2.tick_params(axis='y', colors='#d13d32')
+ax2.spines['right'].set_color('#8b20a8')
+ax2.tick_params(axis='y', colors='#8b20a8')
 ax2.spines['left'].set_visible(False) # this gets rid of black overlay on left hand y-axis
 
 plt.title(f'Spectral Data Visualisation\nTotal Photons: {int(photon_number):,}')
