@@ -91,6 +91,7 @@ def wavelength_filter(spectrum, wavelength, target_wavelength, bandwidth):
 # Define non-linear blackbody source spectrum function
 def source_spectrum(wavelength, temperature):
     source_spectrum = (2*h*c**2) / ((wavelength * 1e-9)**5 * (np.exp(h * c / (wavelength *1e-9 * k * temperature)) -1))
+    source_spectrum = (source_spectrum * (wavelength * 1e-9)) / (h * c)
     source_spectrum /= np.sum(source_spectrum)
     return source_spectrum
 
@@ -119,9 +120,9 @@ def observed_spectrum(wavelength, temperature):
 
 # Function to calculate photon counts from intensity and normalise to 100% scale
 def get_photon_counts(spectrum, wavelength, photon_number):
-    photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
-    photon_counts /= np.sum(photon_counts)
-    photon_counts *= photon_number
+    #photon_counts = (spectrum * (wavelength * 1e-9)) / (h * c)
+    #photon_counts /= np.sum(photon_counts)
+    photon_counts = spectrum * photon_number
     return photon_counts
 
 #Get user inputs
@@ -207,4 +208,14 @@ ax2.spines['left'].set_visible(False) # this gets rid of black overlay on left h
 
 plt.title(f'Spectral Data Visualisation\nTotal Photons: {int(photon_number):,}')
 plt.tight_layout()
+
+# Save option
+# save_plot = input('Would you like to save the plot? (y/n): ').strip().lower()
+# if save_plot == 'y':
+#     filename = input('Enter filename (without extension)): ').strip()
+#     if filename == '':
+#         filename = 'spectral_plot'
+#     plt.savefig(f'{filename}.png', dpi=300)
+#     print(f'Plot saved to {filename}.png')
+
 plt.show()
