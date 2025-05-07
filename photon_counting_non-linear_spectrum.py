@@ -206,7 +206,9 @@ ax2.spines['right'].set_color('#8b20a8')
 ax2.tick_params(axis='y', colors='#8b20a8')
 ax2.spines['left'].set_visible(False) # this gets rid of black overlay on left hand y-axis
 
-plt.title(f'Spectral Data Visualisation\nTotal Photons: {int(photon_number):,}')
+plt.title('Spectral Data Visualisation', loc='center', fontsize=17)
+plt.title(f'Total Photons: {int(photon_number):,}\nTemperature: {temperature}', loc='left')
+plt.title(f'Model: {model}\nFilters: {filters}', loc='right')
 plt.tight_layout()
 
 # Save option
