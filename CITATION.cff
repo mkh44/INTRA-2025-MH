@@ -1,0 +1,12 @@
+ccf-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Hurley"
+given-names: "Molly"
+-family-names: "Creaner"
+given-names: "Oisin"
+orcid: "https://orcid.org/0000-0002-1080-0090"
+title: "INTRA-2025-MH"
+version: 0.1
+date-released: 15-05-2025
+url: https://github.com/mkh44/INTRA-2025-MH.git
