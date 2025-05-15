@@ -11,7 +11,7 @@ pip install numpy pandas matplotlib
 ```
 
 ## Usage
-
+Use the script in the file:
 ```python
 photon_counting_non-linear_spectrum
 ```
