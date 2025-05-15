@@ -208,7 +208,7 @@ ax2.spines['left'].set_visible(False) # this gets rid of black overlay on left h
 
 plt.title('Spectral Data Visualisation', loc='center', fontsize=17)
 plt.title(f'Total Photons: {int(photon_number):,}\nTemperature: {temperature}', loc='left')
-plt.title(f'Model: {model}\nFilters: {filters}', loc='right')
+plt.title(f'Filters: {filters}\nModel: {model}', loc='right')
 plt.tight_layout()
 
 # Save option
